@@ -8,11 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Constants.ControllerConstants;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.subsystems.Vision.TagPose;
+import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 
 @TeleOp(name = "Arcade Drive", group = "Drive")
 public class ArcadeDrive extends LinearOpMode {
     private RobotHardware robot;
-    private double speedMultiplier = 1.0;
 
     @Override
     public void runOpMode() {
@@ -23,9 +23,14 @@ public class ArcadeDrive extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         robot.init();
+
+        // Enable camera stream in Driver Station app
+        if (robot.vision.getVisionPortal() != null) {
+            robot.vision.getVisionPortal().setProcessorEnabled(robot.vision.getAprilTagProcessor(), true);
+        }
+
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Instructions", "Left Stick = Drive + Turn");
-        telemetry.addData("Speed Control", "Bumpers = Adjust Speed");
         telemetry.update();
 
         waitForStart();
@@ -42,24 +47,24 @@ public class ArcadeDrive extends LinearOpMode {
 
     private void handleDriveControls() {
         // Get joystick values and apply deadband
-        double turn = gamepad1.left_stick_y;
-        double drive = -gamepad1.left_stick_x;
+        double turn = -gamepad1.left_stick_y;
+        double drive = gamepad1.left_stick_x;
 
         // Apply deadband
         if (Math.abs(drive) < ControllerConstants.STICK_DEADBAND) drive = 0;
         if (Math.abs(turn) < ControllerConstants.STICK_DEADBAND) turn = 0;
 
         // Apply speed multiplier and drive
-        robot.drivetrain.setPower(drive * speedMultiplier, turn * speedMultiplier);
+        robot.drivetrain.setPower(drive * DriveConstants.SPEED_MULTIPLIER, turn * DriveConstants.SPEED_MULTIPLIER);
     }
 
     private void handleSpeedControls() {
         // Adjust speed multiplier with bumpers
-        if (gamepad1.right_bumper && speedMultiplier < 1.0) {
-            speedMultiplier += 0.25;
+        if (gamepad1.right_bumper && DriveConstants.SPEED_MULTIPLIER < 1.0) {
+            DriveConstants.SPEED_MULTIPLIER += 0.25;
         }
-        if (gamepad1.left_bumper && speedMultiplier > 0.25) {
-            speedMultiplier -= 0.25;
+        if (gamepad1.left_bumper && DriveConstants.SPEED_MULTIPLIER > 0.25) {
+            DriveConstants.SPEED_MULTIPLIER -= 0.25;
         }
     }
 
@@ -68,13 +73,17 @@ public class ArcadeDrive extends LinearOpMode {
         if (gamepad1.y) {
             robot.drivetrain.resetEncoders();
         }
+
+        if (gamepad1.b) {
+            robot.drivetrain.stop();
+        }
     }
 
     private void updateTelemetry() {
         telemetry.addData("=== DRIVER CONTROLS ===", "");
-        telemetry.addData("Drive Power", "%.2f", -gamepad1.left_stick_y * speedMultiplier);
-        telemetry.addData("Turn Power", "%.2f", gamepad1.left_stick_x * speedMultiplier);
-        telemetry.addData("Speed Multiplier", "%.2f", speedMultiplier);
+        telemetry.addData("Drive Power", "%.2f", -gamepad1.left_stick_y * DriveConstants.SPEED_MULTIPLIER);
+        telemetry.addData("Turn Power", "%.2f", gamepad1.left_stick_x * DriveConstants.SPEED_MULTIPLIER);
+        telemetry.addData("Speed Multiplier", "%.2f", DriveConstants.SPEED_MULTIPLIER);
 
         // Add AprilTag pose information
         TagPose pose = robot.vision.getRelativePose();
@@ -84,6 +93,7 @@ public class ArcadeDrive extends LinearOpMode {
             telemetry.addData("Tag Y", "%.2f in", pose.y);
             telemetry.addData("Tag Z", "%.2f in", pose.z);
             telemetry.addData("Tag Heading", "%.2f°", pose.heading);
+            telemetry.addData("Tag ID", "%d", pose.tagID);
             telemetry.addData("Distance from Tag", "%.2f in",
                     Math.sqrt(pose.x * pose.x + pose.y * pose.y));
         } else {
@@ -91,8 +101,8 @@ public class ArcadeDrive extends LinearOpMode {
         }
 
         telemetry.addData("\n=== ENCODER DAT A ===", "");
-        telemetry.addData("Left Position", robot.drivetrain.getLeftPosition());
-        telemetry.addData("Right Position", robot.drivetrain.getRightPosition());
+        telemetry.addData("Left Position", robot.drivetrain.getLeftPosition() % 360);
+        telemetry.addData("Right Position", robot.drivetrain.getRightPosition() % 360);
 
         telemetry.addData("\n=== CONTROLS ===", "");
         telemetry.addData("Drive", "Left Stick = Move + Turn");

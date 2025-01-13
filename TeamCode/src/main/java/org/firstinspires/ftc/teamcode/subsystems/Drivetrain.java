@@ -31,23 +31,6 @@ public class Drivetrain {
         dashboard = FtcDashboard.getInstance();
     }
 
-    public void driveWithJoystick(Gamepad gamepad) {
-        // Get joystick values and apply deadband
-        double drive = -applyDeadband(gamepad.left_stick_y); // Y-axis for forward/backward
-        double turn = applyDeadband(gamepad.left_stick_x);   // X-axis for turning
-
-        // Calculate motor powers using arcade drive formula
-        setPower(drive, turn);
-    }
-
-    private double applyDeadband(double value) {
-        if (Math.abs(value) < ControllerConstants.STICK_DEADBAND) {
-            return 0;
-        }
-        return value;
-    }
-
-
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
         leftFront.setZeroPowerBehavior(behavior);
         rightFront.setZeroPowerBehavior(behavior);
