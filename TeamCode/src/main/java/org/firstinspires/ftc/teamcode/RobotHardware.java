@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.sensors.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 public class RobotHardware {
@@ -10,11 +11,14 @@ public class RobotHardware {
     public final Drivetrain drivetrain;
     public final Vision vision;
 
+    public final Imu imu;
+
     /* Constructor */
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
         drivetrain = new Drivetrain(myOpMode.hardwareMap);
         vision = new Vision(myOpMode.hardwareMap);
+        imu = new Imu(myOpMode.hardwareMap);
     }
 
     /**

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision.TagPose;
 import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 
 @TeleOp(name = "Arcade Drive", group = "Drive")
-public class ArcadeDrive extends LinearOpMode {
+public class MecanumDrive extends LinearOpMode {
     private RobotHardware robot;
 
     @Override
@@ -47,15 +47,23 @@ public class ArcadeDrive extends LinearOpMode {
 
     private void handleDriveControls() {
         // Get joystick values and apply deadband
-        double turn = -gamepad1.left_stick_y;
-        double drive = gamepad1.left_stick_x;
+        double drive = gamepad1.left_stick_y;
+        double strafe = -gamepad1.left_stick_x;
+        double turn = -gamepad1.right_stick_x;
+
+
 
         // Apply deadband
         if (Math.abs(drive) < ControllerConstants.STICK_DEADBAND) drive = 0;
         if (Math.abs(turn) < ControllerConstants.STICK_DEADBAND) turn = 0;
+        if (Math.abs(strafe) < ControllerConstants.STICK_DEADBAND) strafe = 0;
 
         // Apply speed multiplier and drive
-        robot.drivetrain.setPower(drive * DriveConstants.SPEED_MULTIPLIER, turn * DriveConstants.SPEED_MULTIPLIER);
+        robot.drivetrain.setMecanumPower(
+                drive* DriveConstants.SPEED_MULTIPLIER,
+                strafe* DriveConstants.SPEED_MULTIPLIER,
+                turn* DriveConstants.SPEED_MULTIPLIER
+        );
     }
 
     private void handleSpeedControls() {
