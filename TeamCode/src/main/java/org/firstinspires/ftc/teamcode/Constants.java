@@ -8,6 +8,8 @@ public final class Constants {
         public static final String LEFT_BACK_MOTOR = "leftBack";
         public static final String RIGHT_BACK_MOTOR = "rightBack";
 
+        public static final String IMU_HUB = "imu";
+
         // Drive parameters
         public static final double MAX_SPEED = 1.0;
         public static final double MIN_SPEED = -1.0;

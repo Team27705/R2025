@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 public class RobotHardware {
     /* Declare OpMode members. */
-    private LinearOpMode myOpMode = null;
+    private LinearOpMode myOpMode = null;   
     public final Drivetrain drivetrain;
     public final Vision vision;
 

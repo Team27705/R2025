@@ -1,9 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
@@ -13,6 +21,8 @@ public class Drivetrain {
     private final DcMotor rightFront;
     private final DcMotor leftBack;
     private final DcMotor rightBack;
+
+    private final IMU imu;
     private final FtcDashboard dashboard;
 
     private double leftFrontPower;
@@ -33,11 +43,31 @@ public class Drivetrain {
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
 
+
+        //Initalize IMU and its direction based on its oreintation BHI260AP
+        imu = hardwareMap.get(IMU.class, DriveConstants.IMU_HUB);
+
+        RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
+                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
+                logoFacingDirection, usbFacingDirection
+        );
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+
         resetEncoders();
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         dashboard = FtcDashboard.getInstance();
     }
+
+    public DcMotor getLeftFront () {return leftFront;} public DcMotor getLeftBack () {return leftBack;}
+    public DcMotor getRightFront () {return rightFront;} public DcMotor getRightBack () {return  rightBack;}
+
+    public IMU getImu() {return imu;}
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
         leftFront.setZeroPowerBehavior(behavior);
@@ -78,17 +108,9 @@ public class Drivetrain {
     }
 
     //to decelerate the motors to zero
-
     public void stop() {
         setMecanumPower(0, 0, 0);
     }
-
-//    public void test(){
-//        leftFront.setTargetPosition(360);
-//        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        leftFront.setPower(.1);
-//
-//    }
 
     public void resetEncoders() {
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -103,18 +125,15 @@ public class Drivetrain {
 
     }
 
-    public void MotorTelemtry(Telemetry telemetry) {
-        telemetry.addData("\nLeft Front Motor", leftFront.getCurrentPosition());
-        telemetry.addData("\nLeft Back Motor", leftBack.getCurrentPosition());
-        telemetry.addData("\nRight Front Motor", rightFront.getCurrentPosition());
-        telemetry.addData("\nRight Back Motor", rightBack.getCurrentPosition());
+//    public void MotorTelemtry(Telemetry telemetry) {
+//        telemetry.addData("\nLeft Front Motor", leftFront.getCurrentPosition());
+//        telemetry.addData("\nLeft Back Motor", leftBack.getCurrentPosition());
+//        telemetry.addData("\nRight Front Motor", rightFront.getCurrentPosition());
+//        telemetry.addData("\nRight Back Motor", rightBack.getCurrentPosition());
+//
+//    }
 
-    }
 
-    public DcMotor getLeftFront () {return leftFront;}
-    public DcMotor getLeftBack () {return leftBack;}
 
-    public DcMotor getRightFront () {return rightFront;}
 
-    public DcMotor getRightBack () {return  rightBack;}
 }
