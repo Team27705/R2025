@@ -128,16 +128,9 @@ public class MecanumDrive extends LinearOpMode {
         telemetry.addData("Speed", "Bumpers = Adjust Speed");
         telemetry.addData("Utility", "Y = Reset Encoders");
 
-        getRobotYaw(imu);
-
-        telemetry.update();
-    }
-
-    public void getRobotYaw(IMU imu){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
-        TelemetryPacket packet = new TelemetryPacket();
 
         telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
         telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
@@ -146,5 +139,6 @@ public class MecanumDrive extends LinearOpMode {
         telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
         telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
 
+        telemetry.update();
     }
 }
