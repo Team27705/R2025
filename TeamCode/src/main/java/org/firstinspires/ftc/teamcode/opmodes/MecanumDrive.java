@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.subsystems.Vision.TagPose;
 import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 
-@TeleOp(name = "Arcade Drive", group = "Drive")
+@TeleOp(name = "Mecanum Drive", group = "Drive")
 public class MecanumDrive extends LinearOpMode {
     private RobotHardware robot;
 
@@ -35,9 +35,9 @@ public class MecanumDrive extends LinearOpMode {
 
         waitForStart();
 
-        robot.drivetrain.testOperation();
 
         while (opModeIsActive()) {
+//            robot.drivetrain.test();
             handleDriveControls();
             handleSpeedControls();
             handleUtilityControls();
@@ -48,28 +48,28 @@ public class MecanumDrive extends LinearOpMode {
     }
 
     private void handleDriveControls() {
-        // Get joystick values and apply deadband
-        double drive = gamepad1.left_stick_y;
-        double strafe = -gamepad1.left_stick_x;
-        double turn = -gamepad1.right_stick_x;
-
-
+        // Get joystick values
+        double drive = gamepad1.left_stick_y;   // Forward/back
+        double strafe = -gamepad1.left_stick_x;   // Left/right
+        double turn = -gamepad1.right_stick_x;    // Turning
 
         // Apply deadband
         if (Math.abs(drive) < ControllerConstants.STICK_DEADBAND) drive = 0;
-        if (Math.abs(turn) < ControllerConstants.STICK_DEADBAND) turn = 0;
         if (Math.abs(strafe) < ControllerConstants.STICK_DEADBAND) strafe = 0;
+        if (Math.abs(turn) < ControllerConstants.STICK_DEADBAND) turn = 0;
 
         // Apply speed multiplier and drive
         robot.drivetrain.setMecanumPower(
-                drive* DriveConstants.SPEED_MULTIPLIER,
-                strafe* DriveConstants.SPEED_MULTIPLIER,
-                turn* DriveConstants.SPEED_MULTIPLIER
+                drive * DriveConstants.SPEED_MULTIPLIER,
+                strafe * DriveConstants.SPEED_MULTIPLIER,
+                turn * DriveConstants.SPEED_MULTIPLIER
         );
     }
 
     private void handleSpeedControls() {
         // Adjust speed multiplier with bumpers
+        // need to implement debouncing
+
         if (gamepad1.right_bumper && DriveConstants.SPEED_MULTIPLIER < 1.0) {
             DriveConstants.SPEED_MULTIPLIER += 0.25;
         }
@@ -89,6 +89,8 @@ public class MecanumDrive extends LinearOpMode {
         }
     }
 
+
+    // http://192.168.43.1:8080/dash
     private void updateTelemetry() {
         telemetry.addData("=== DRIVER CONTROLS ===", "");
         telemetry.addData("Drive Power", "%.2f", -gamepad1.left_stick_y * DriveConstants.SPEED_MULTIPLIER);
@@ -111,6 +113,7 @@ public class MecanumDrive extends LinearOpMode {
         }
 
         telemetry.addData("\n=== ENCODER DATA ===", "");
+
 
         telemetry.addData("\n=== CONTROLS ===", "");
         telemetry.addData("Drive", "Left Stick = Move + Turn");

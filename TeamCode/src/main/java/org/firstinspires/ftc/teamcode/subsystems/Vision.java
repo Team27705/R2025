@@ -17,7 +17,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-public class Vision {
+public class  Vision {
     private final HardwareMap hardwareMap;
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
@@ -64,7 +64,7 @@ public class Vision {
 
         if (currentDetections != null && !currentDetections.isEmpty()) {
             AprilTagDetection detection = currentDetections.get(0);
-            
+
             if (detection != null && detection.ftcPose != null) {
                 return new TagPose(
                         detection.id,
@@ -110,4 +110,4 @@ public class Vision {
             this.heading = heading;
         }
     }
-} 
+}

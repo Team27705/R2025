@@ -5,7 +5,6 @@ public final class Constants {
         // Motor names
         public static final String LEFT_FRONT_MOTOR = "leftFront";
         public static final String RIGHT_FRONT_MOTOR = "rightFront";
-
         public static final String LEFT_BACK_MOTOR = "leftBack";
         public static final String RIGHT_BACK_MOTOR = "rightBack";
 
@@ -14,12 +13,6 @@ public final class Constants {
         public static final double MIN_SPEED = -1.0;
 
         public static double SPEED_MULTIPLIER = 1.0;
-    }
-
-    public static final class PIDConstants{
-        public static double Kp = 0.0;        //Proportion
-        public static double Ki = 0.0;        //Integral
-        public static double Kd = 0.0;        //Derivative
     }
 
     public static final class ControllerConstants {
