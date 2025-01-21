@@ -48,6 +48,7 @@ public class Drivetrain {
         rightBack.setZeroPowerBehavior(behavior);
     }
 
+
     //https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
 
     public void setMecanumPower(double drive, double strafe, double turn) {
@@ -115,7 +116,7 @@ public class Drivetrain {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-//    public void testOperation (){
-//        leftFront.
-//    }
+    public void testOperation (){
+        leftFront.setTargetPosition(360);
+    }
 }

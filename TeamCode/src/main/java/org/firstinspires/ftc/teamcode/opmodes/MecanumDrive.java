@@ -35,6 +35,8 @@ public class MecanumDrive extends LinearOpMode {
 
         waitForStart();
 
+        robot.drivetrain.testOperation();
+
         while (opModeIsActive()) {
             handleDriveControls();
             handleSpeedControls();
@@ -108,9 +110,7 @@ public class MecanumDrive extends LinearOpMode {
             telemetry.addData("Tag Status", "No tag detected");
         }
 
-        telemetry.addData("\n=== ENCODER DAT A ===", "");
-        telemetry.addData("Left Position", robot.drivetrain.getLeftPosition() % 360);
-        telemetry.addData("Right Position", robot.drivetrain.getRightPosition() % 360);
+        telemetry.addData("\n=== ENCODER DATA ===", "");
 
         telemetry.addData("\n=== CONTROLS ===", "");
         telemetry.addData("Drive", "Left Stick = Move + Turn");
