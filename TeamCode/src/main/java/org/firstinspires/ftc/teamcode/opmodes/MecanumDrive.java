@@ -20,6 +20,11 @@ import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 @TeleOp(name = "Mecanum Drive", group = "Drive")
 public class MecanumDrive extends LinearOpMode {
     private RobotHardware robot;
+    private boolean rbPressed = false;
+    private boolean lbPressed = false;
+    private long lastSpeedChangeTime = 0;
+    private static final long debounceTime = 250;
+
 
     @Override
     public void runOpMode() {
@@ -77,13 +82,28 @@ public class MecanumDrive extends LinearOpMode {
     private void handleSpeedControls() {
         // Adjust speed multiplier with bumpers
         // need to implement debouncing
+        long currentTime = System.currentTimeMillis();
 
-        if (gamepad1.right_bumper && DriveConstants.SPEED_MULTIPLIER < 1.0) {
-            DriveConstants.SPEED_MULTIPLIER += 0.25;
+        if (gamepad1.right_bumper && !rbPressed && currentTime - lastSpeedChangeTime > debounceTime) {
+            if (DriveConstants.SPEED_MULTIPLIER < 1.0){
+                DriveConstants.SPEED_MULTIPLIER += 0.25;
+                lastSpeedChangeTime = currentTime;
+            }
+            rbPressed = true;
+        } else if (!gamepad1.right_bumper){
+            rbPressed = false;
         }
-        if (gamepad1.left_bumper && DriveConstants.SPEED_MULTIPLIER > 0.25) {
-            DriveConstants.SPEED_MULTIPLIER -= 0.25;
+
+        if (gamepad1.left_bumper && !lbPressed && currentTime - lastSpeedChangeTime > debounceTime) {
+            if (DriveConstants.SPEED_MULTIPLIER > 0.25){
+                DriveConstants.SPEED_MULTIPLIER -= 0.25;
+                lastSpeedChangeTime = currentTime;
+            }
+            lbPressed = true;
+        } else if (!gamepad1.left_bumper){
+            lbPressed = false;
         }
+
     }
 
     private void handleUtilityControls() {
