@@ -30,6 +30,10 @@ public class Drivetrain {
     private double leftBackPower;
     private double rightBackPower;
 
+    /**
+     * Constructor for the Drivetrain class
+     * */
+
     public Drivetrain(HardwareMap hardwareMap) {
         // Initialize all four motors
         leftFront = hardwareMap.get(DcMotor.class, DriveConstants.LEFT_FRONT_MOTOR);
@@ -64,6 +68,7 @@ public class Drivetrain {
         dashboard = FtcDashboard.getInstance();
     }
 
+    //get motor methods
     public DcMotor getLeftFront () {return leftFront;} public DcMotor getLeftBack () {return leftBack;}
     public DcMotor getRightFront () {return rightFront;} public DcMotor getRightBack () {return  rightBack;}
 
@@ -98,8 +103,19 @@ public class Drivetrain {
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
 
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
+
         // Dashboard telemetry
         TelemetryPacket packet = new TelemetryPacket();
+
+        packet.put("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+        packet.put("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
+        packet.put("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
+        packet.put("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);
+        packet.put("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
+        packet.put("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
+
         packet.put("Left Front Power", leftFrontPower);
         packet.put("Right Front Power", rightFrontPower);
         packet.put("Left Back Power", leftBackPower);
@@ -124,6 +140,7 @@ public class Drivetrain {
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+
 
 //    public void MotorTelemtry(Telemetry telemetry) {
 //        telemetry.addData("\nLeft Front Motor", leftFront.getCurrentPosition());
