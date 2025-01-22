@@ -21,6 +21,11 @@ public final class Constants {
         public static final double STICK_DEADBAND = 0.1; // Ignore small stick movements
     }
 
+    public static final class IntakeConstants {
+        public static final String ARM_MOTOR = "armMotor";
+        public static final String ARM_SERVO = "servoArm";
+    }
+
     public static final class VisionConstants {
         public static final String WEBCAM_NAME = "Vision";
         public static final int RESOLUTION_WIDTH = 640;
@@ -30,4 +35,5 @@ public final class Constants {
         public static final double CX = 402.145;
         public static final double CY = 221.506;
     }
+
 } 

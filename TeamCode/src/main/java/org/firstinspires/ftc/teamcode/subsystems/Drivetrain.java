@@ -30,6 +30,13 @@ public class Drivetrain {
     private double leftBackPower;
     private double rightBackPower;
 
+    private YawPitchRollAngles orientation;
+    private AngularVelocity angularVelocity;
+
+    /**
+     * Constructor for the Drivetrain class
+     * */
+
     public Drivetrain(HardwareMap hardwareMap) {
         // Initialize all four motors
         leftFront = hardwareMap.get(DcMotor.class, DriveConstants.LEFT_FRONT_MOTOR);
@@ -57,6 +64,9 @@ public class Drivetrain {
         );
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
+        orientation = imu.getRobotYawPitchRollAngles();
+        imu.getRobotAngularVelocity(AngleUnit.DEGREES);
+
 
         resetEncoders();
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -64,6 +74,7 @@ public class Drivetrain {
         dashboard = FtcDashboard.getInstance();
     }
 
+    //get motor methods
     public DcMotor getLeftFront () {return leftFront;} public DcMotor getLeftBack () {return leftBack;}
     public DcMotor getRightFront () {return rightFront;} public DcMotor getRightBack () {return  rightBack;}
 
@@ -98,13 +109,27 @@ public class Drivetrain {
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
 
-        // Dashboard telemetry
         TelemetryPacket packet = new TelemetryPacket();
+
         packet.put("Left Front Power", leftFrontPower);
         packet.put("Right Front Power", rightFrontPower);
         packet.put("Left Back Power", leftBackPower);
         packet.put("Right Back Power", rightBackPower);
         dashboard.sendTelemetryPacket(packet);
+    }
+
+    public void ImuHandle () {
+        // Dashboard telemetry
+        TelemetryPacket packet = new TelemetryPacket();
+
+        packet.put("Yaw (Z)",  orientation.getYaw(AngleUnit.DEGREES));
+        packet.put("Pitch (X)", orientation.getPitch(AngleUnit.DEGREES));
+        packet.put("Roll (Y)",  orientation.getRoll(AngleUnit.DEGREES));
+        dashboard.sendTelemetryPacket(packet);
+
+//        packet.put("Yaw (Z) velocity",  angularVelocity.zRotationRate);
+//        packet.put("Pitch (X) velocity",  angularVelocity.xRotationRate);
+//        packet.put("Roll (Y) velocity",  angularVelocity.yRotationRate);
     }
 
     //to decelerate the motors to zero
@@ -124,6 +149,7 @@ public class Drivetrain {
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+
 
 //    public void MotorTelemtry(Telemetry telemetry) {
 //        telemetry.addData("\nLeft Front Motor", leftFront.getCurrentPosition());
