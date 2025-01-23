@@ -35,19 +35,20 @@ public class Intake {
 
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
     }
 
+
+
     public void servoControl (Gamepad gamepad2){
-        if (gamepad2.right_trigger > 0.1) {
+        if (gamepad2.right_bumper) {
             currentServoPosition += servoScale;
         }
-        if (gamepad2.right_trigger > 0.1) {
+        if (gamepad2.left_bumper) {
             currentServoPosition -= servoScale;
         }
-
         currentServoPosition = Math.min(Math.max(currentServoPosition, 0.0), 1.0);
         servo.setPosition(currentServoPosition);
     }
@@ -55,22 +56,17 @@ public class Intake {
     public void sampleGrabbed () {
 
     }
-    public void armMotorControl (Gamepad gamepad2){
-        int currentPosition = armMotor.getCurrentPosition();
-        int targetPosition = currentPosition;
-
-        if (Math.abs(gamepad2.right_stick_y) > 0.1){
-            int degreeChange = (int) (gamepad2.right_stick_y * 5);
-            targetPosition = currentPosition + (degreeChange * armTicks);
+    public void armMotorControl (double power){
+        double currentPower = power;
+        double maxPower = Math.abs(currentPower);
+        if (power > maxPower){
+            currentPower /= maxPower;
         }
-
-        armMotor.setTargetPosition(targetPosition);
-        armMotor.setPower(armPowerScale);
+        armMotor.setPower(currentPower);
     }
 
-    public void update(Gamepad gamepad2){
-        armMotorControl(gamepad2);
-        servoControl(gamepad2);
+    public void update(){
+
     }
 
     public boolean isArmBusy(){
@@ -82,10 +78,14 @@ public class Intake {
     }
 
     public void stop() {
-        armMotor.setPower(0);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        armMotor.setPower(0);
         servo.setPosition(0);
+    }
+
+    public void resetEncoders(){
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 }

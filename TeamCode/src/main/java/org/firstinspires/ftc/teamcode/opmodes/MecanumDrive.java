@@ -17,6 +17,14 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.subsystems.Vision.TagPose;
 import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 
+
+
+/**
+ * Gamepad 1(A) controls driving
+ * Gamepad 2(B) controls intake
+ *
+ * */
+
 @TeleOp(name = "Mecanum Drive", group = "Drive")
 public class MecanumDrive extends LinearOpMode {
     private RobotHardware robot;
@@ -60,8 +68,6 @@ public class MecanumDrive extends LinearOpMode {
             handleUtilityControls();
             handleIntakeControls();
             updateTelemetry();
-
-
         }
 
         robot.drivetrain.stop();
@@ -87,19 +93,16 @@ public class MecanumDrive extends LinearOpMode {
     }
 
     private void handleIntakeControls() {
-        long currentTime = System.currentTimeMillis();
-        //handle debouncing
-        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
-            if (!armMoving || (currentTime - lastArmMoveTime > armDebounceTime)){
-                robot.intake.armMotorControl(gamepad2);
-                armMoving = true;
-                lastArmMoveTime = currentTime;
-            }
-        } else {
-            armMoving = false;
-        }
+        double turn = gamepad2.right_stick_y;
 
-        if (gamepad2.right_trigger > 0.1 || gamepad2.left_trigger > 0.1){
+        long currentTime = System.currentTimeMillis();
+
+        if (Math.abs(turn) < ControllerConstants.STICK_DEADBAND) {turn = 0;}
+        //handle debouncing
+
+        robot.intake.armMotorControl(turn);
+
+        if (gamepad2.right_trigger > .1 || gamepad2.left_trigger > 0.1){
             if (!servoMoving || (currentTime - lastServoMoveTime > servoDebounceTime)){
                 robot.intake.servoControl(gamepad2);
                 servoMoving = true;

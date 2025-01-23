@@ -1,6 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 public final class Constants {
+
+    public enum OpMode {
+        TELEOP,
+        AUTO
+    }
+
     public static final class DriveConstants {
         // Motor names
         public static final String LEFT_FRONT_MOTOR = "leftFront";
