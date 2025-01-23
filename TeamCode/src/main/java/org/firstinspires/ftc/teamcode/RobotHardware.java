@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+//import org.firstinspires.ftc.teamcode.subsystems.BeamBreak;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 public class RobotHardware {
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   
     public final Drivetrain drivetrain;
+
+    public final Intake intake;
     public final Vision vision;
 
     /* Constructor */
@@ -15,6 +20,7 @@ public class RobotHardware {
         myOpMode = opmode;
         drivetrain = new Drivetrain(myOpMode.hardwareMap);
         vision = new Vision(myOpMode.hardwareMap);
+        intake = new Intake(myOpMode.hardwareMap);
     }
 
     /**
@@ -32,6 +38,7 @@ public class RobotHardware {
     public void stop() {
         try {
             drivetrain.stop();
+            intake.stop();
             vision.close();
         } catch (Exception e) {
             myOpMode.telemetry.addData("Error during stop", e.getMessage());
