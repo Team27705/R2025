@@ -24,6 +24,7 @@ public final class Constants {
     public static final class IntakeConstants {
         public static final String ARM_MOTOR = "armMotor";
         public static final String ARM_SERVO = "servoArm";
+        public static final String ARM_SENSOR = "colorSensor";
     }
 
     public static final class VisionConstants {
