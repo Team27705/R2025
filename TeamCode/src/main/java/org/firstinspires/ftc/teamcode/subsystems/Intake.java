@@ -15,7 +15,7 @@ public class Intake {
     public final Servo servo;
     public final ColorSensor colorSensor;
 
-//    public final BeamBreak beamBreak;
+    public final BeamBreak beamBreak;
 
     private static final double armPowerScale = 0.5;
     private static final double servoScale = 0.01;
@@ -26,7 +26,7 @@ public class Intake {
         armMotor = hardwareMap.get(DcMotor.class, Constants.IntakeConstants.ARM_MOTOR);
         servo = hardwareMap.get(Servo.class, Constants.IntakeConstants.ARM_SERVO);
         colorSensor = hardwareMap.get(ColorSensor.class, Constants.IntakeConstants.ARM_SENSOR);
-//        beamBreak = hardwareMap.get(BeamBreak.class, Constants.IntakeConstants.BEAM_BREAK);
+        beamBreak = hardwareMap.get(BeamBreak.class, Constants.IntakeConstants.BEAM_BREAK);
 
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         servo.setDirection(Servo.Direction.FORWARD);
