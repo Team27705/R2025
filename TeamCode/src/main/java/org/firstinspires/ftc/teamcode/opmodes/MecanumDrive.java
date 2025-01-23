@@ -80,7 +80,11 @@ public class MecanumDrive extends LinearOpMode {
     }
 
     private void handleIntakeControls() {
-        double armRotation = gamepad1.right_stick_y;
+        double armRotation = gamepad2.right_stick_y;
+        //handle debouncing
+        if () {
+
+        }
 
     }
 
