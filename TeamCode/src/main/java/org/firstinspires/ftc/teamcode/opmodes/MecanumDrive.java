@@ -144,6 +144,7 @@ public class MecanumDrive extends LinearOpMode {
         // Reset encoders with Y button
         if (gamepad1.y) {
             robot.drivetrain.resetEncoders();
+            robot.intake.resetEncoders();
         }
 
         if (gamepad1.b) {

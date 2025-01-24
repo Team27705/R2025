@@ -32,10 +32,7 @@ public class Intake {
         servo.setDirection(Servo.Direction.FORWARD);
 
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-//        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
     }
@@ -54,13 +51,17 @@ public class Intake {
     }
 
     public void sampleGrabbed () {
+        if (beamBreak.beamState()) {
 
+        }
     }
     public void armMotorControl (double power){
         double currentPower = power;
-        double maxPower = Math.abs(currentPower);
-        if (power > maxPower){
-            currentPower /= maxPower;
+        if (power > 1){
+            currentPower /= Math.abs(currentPower);
+        }
+        if (power < -1) {
+            currentPower /= Math.abs(currentPower);
         }
         armMotor.setPower(currentPower);
     }
