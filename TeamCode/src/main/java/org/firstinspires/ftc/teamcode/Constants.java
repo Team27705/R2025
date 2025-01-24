@@ -32,6 +32,7 @@ public final class Constants {
         public static final String ARM_SERVO = "servoArm";
         public static final String ARM_SENSOR = "colorSensor";
         public static final String BEAM_BREAK = "beamSensor";
+        public static double SPEED_MULTIPLIER = 1.0;
     }
 
     public static final class VisionConstants {

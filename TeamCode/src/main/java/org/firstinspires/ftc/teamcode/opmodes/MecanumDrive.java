@@ -12,10 +12,12 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Constants.ControllerConstants;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.subsystems.Vision.TagPose;
 import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
+
 
 /**
  * Gamepad 1(A) controls driving
@@ -26,16 +28,22 @@ import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 @TeleOp(name = "Mecanum Drive", group = "Drive")
 public class MecanumDrive extends LinearOpMode {
     private RobotHardware robot;
-    private boolean rbPressed = false;
-    private boolean lbPressed = false;
-    private long lastSpeedChangeTime = 0;
+    private boolean rbPressedA = false;
+    private boolean lbPressedA = false;
+
+    private boolean lbPressedB = false;
+    private boolean rbPressedB = false;
+    private long lastSpeedChangeTimeA = 0;
+    private long lastSpeedChangeTimeB = 0;
     private static final long debounceTime = 250;
+
+    private static final double servoIncrement = 10.0 / 150;
 
     private boolean armMoving = false;
     private long lastArmMoveTime = 0;
 
     private static final long armDebounceTime = 100;
-    
+
 
     @Override
     public void runOpMode() {
@@ -56,7 +64,7 @@ public class MecanumDrive extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        
+
         while (opModeIsActive()) {
             handleDriveControls();
             handleSpeedControls();
@@ -65,6 +73,8 @@ public class MecanumDrive extends LinearOpMode {
             updateTelemetry();
         }
         robot.drivetrain.stop();
+        robot.intake.hold();
+        robot.vision.close();
     }
 
     private void handleDriveControls() {
@@ -88,39 +98,72 @@ public class MecanumDrive extends LinearOpMode {
 
     private void handleIntakeControls() {
         double turn = gamepad2.right_stick_y;
-
-        long currentTime = System.currentTimeMillis();
-
-        if (Math.abs(turn) < ControllerConstants.STICK_DEADBAND) {turn = 0;}
+        if (turn >= .5 ) {
+            turn = .15;
+        }
+        else if (turn <= -.5) {
+            turn = -.15;
+        }
+        else {
+            turn =0;
+            robot.intake.hold();
+        }
         //handle debouncing
 
-        robot.intake.armMotorControl(turn);
+        robot.intake.armMotorControl(turn * Constants.IntakeConstants.SPEED_MULTIPLIER);
 
+        if (gamepad2.x){
+            robot.intake.servoControl(servoIncrement);
+        }
+        if (gamepad2.y) {
+            robot.intake.servoControl(-servoIncrement);
+        }
     }
 
     private void handleSpeedControls() {
         // Adjust speed multiplier with bumpers
         // need to implement debouncing
-        long currentTime = System.currentTimeMillis();
+        long currentTimeA = System.currentTimeMillis();
+        long currentTimeB = System.currentTimeMillis();
 
-        if (gamepad1.right_bumper && !rbPressed && currentTime - lastSpeedChangeTime > debounceTime) {
+        if (gamepad1.right_bumper && !rbPressedA && currentTimeA - lastSpeedChangeTimeA > debounceTime) {
             if (DriveConstants.SPEED_MULTIPLIER < 1.0){
                 DriveConstants.SPEED_MULTIPLIER += 0.25;
-                lastSpeedChangeTime = currentTime;
+                lastSpeedChangeTimeA = currentTimeA;
             }
-            rbPressed = true;
+            rbPressedA = true;
         } else if (!gamepad1.right_bumper){
-            rbPressed = false;
+            rbPressedA = false;
         }
 
-        if (gamepad1.left_bumper && !lbPressed && currentTime - lastSpeedChangeTime > debounceTime) {
+        if (gamepad1.left_bumper && !lbPressedA && currentTimeA - lastSpeedChangeTimeA > debounceTime) {
             if (DriveConstants.SPEED_MULTIPLIER > 0.25){
                 DriveConstants.SPEED_MULTIPLIER -= 0.25;
-                lastSpeedChangeTime = currentTime;
+                lastSpeedChangeTimeB = currentTimeA;
             }
-            lbPressed = true;
+            lbPressedA = true;
         } else if (!gamepad1.left_bumper){
-            lbPressed = false;
+            lbPressedA = false;
+        }
+
+        if (gamepad2.left_bumper && !lbPressedB && currentTimeB - lastSpeedChangeTimeB > debounceTime) {
+            if (Constants.IntakeConstants.SPEED_MULTIPLIER > 1) {
+                Constants.IntakeConstants.SPEED_MULTIPLIER -= .25;
+                lastSpeedChangeTimeA = currentTimeB;
+            }
+            lbPressedB = true;
+        }
+        else if (!gamepad2.left_bumper) {
+            lbPressedB = false;
+        }
+        if (gamepad2.right_bumper && !rbPressedB && currentTimeB - lastSpeedChangeTimeB > debounceTime) {
+            if (DriveConstants.SPEED_MULTIPLIER < 1.0){
+                DriveConstants.SPEED_MULTIPLIER += 0.25;
+                lastSpeedChangeTimeA = currentTimeA;
+            }
+            rbPressedB = true;
+        } else if (!gamepad2.right_bumper){
+            rbPressedB = false;
         }
     }
 
@@ -130,16 +173,19 @@ public class MecanumDrive extends LinearOpMode {
             robot.drivetrain.resetEncoders();
             robot.intake.resetEncoders();
         }
-        if (gamepad1.b) {
+        if (gamepad1.a) {
             robot.drivetrain.stop();
         }
+
+
     }
     // http://192.168.43.1:8080/dash
     private void updateTelemetry() {
         telemetry.addData("=== DRIVER CONTROLS ===", "");
         telemetry.addData("Drive Power", "%.2f", -gamepad1.left_stick_y * DriveConstants.SPEED_MULTIPLIER);
         telemetry.addData("Turn Power", "%.2f", gamepad1.left_stick_x * DriveConstants.SPEED_MULTIPLIER);
-        telemetry.addData("Speed Multiplier", "%.2f", DriveConstants.SPEED_MULTIPLIER);
+        telemetry.addData("Drivetrain Speed Multiplier", "%.2f", DriveConstants.SPEED_MULTIPLIER);
+        telemetry.addData("Arm Speed Multiplier", "%.2f", Constants.IntakeConstants.SPEED_MULTIPLIER);
         // Add AprilTag pose information
         TagPose pose = robot.vision.getRelativePose();
         telemetry.addData("\n=== APRILTAG DATA ===", "");

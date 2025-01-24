@@ -13,13 +13,13 @@ public class Intake {
 
     public final DcMotor armMotor;
     public final Servo servo;
-    public final ColorSensor colorSensor;
+//    public final ColorSensor colorSensor;
 
-    public final BeamBreak beamBreak;
+//    public final BeamBreak beamBreak;
 
     private static final double armPowerScale = 0.5;
-    private static final double servoIncrement = 10.0;
-    private double currentServoPosition = 0.5;
+
+    private double currentServoPosition = 0;
     private static final double servoMin = 0.0;
     private static final double servoMax = 1.0;
     private static final int armTicks = 10; //idk our encoder resolution
@@ -27,45 +27,34 @@ public class Intake {
     public Intake (HardwareMap hardwareMap) {
         armMotor = hardwareMap.get(DcMotor.class, Constants.IntakeConstants.ARM_MOTOR);
         servo = hardwareMap.get(Servo.class, Constants.IntakeConstants.ARM_SERVO);
-        colorSensor = hardwareMap.get(ColorSensor.class, Constants.IntakeConstants.ARM_SENSOR);
-        beamBreak = hardwareMap.get(BeamBreak.class, Constants.IntakeConstants.BEAM_BREAK);
+//        colorSensor = hardwareMap.get(ColorSensor.class, Constants.IntakeConstants.ARM_SENSOR);
+//        beamBreak = hardwareMap.get(BeamBreak.class, Constants.IntakeConstants.BEAM_BREAK);
 
-        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         servo.setDirection(Servo.Direction.FORWARD);
 
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
+        servo.setPosition(0);
     }
 
-    public void servoControl (Gamepad gamepad2){
-        if (gamepad2.y) {
-            // decrease incrementally by 10 degrees
-            currentServoPosition -= servoIncrement;
-        }
-        if (gamepad2.x) {
-            // increase incrementally by 10 degrees
-            currentServoPosition += servoIncrement;
-        }
-        if (gamepad2.a) {
-            // set position to 0 degrees
-            currentServoPosition = servoMin;
-        }
+    public void servoControl (double increment){
+        currentServoPosition += increment;
 
         currentServoPosition = Math.min(Math.max(currentServoPosition, servoMin), servoMax);
 
         servo.setPosition(currentServoPosition);
     }
 
+    public void resetServo (){
+
+    }
+
+
     public void armMotorControl (double power){
         double currentPower = power;
-        if (power > 1){
-            currentPower /= Math.abs(currentPower);
-        }
-        if (power < -1) {
-            currentPower /= Math.abs(currentPower);
-        }
         armMotor.setPower(currentPower);
     }
 
@@ -77,8 +66,11 @@ public class Intake {
         return armMotor.getCurrentPosition();
     }
 
+    public void hold (){
+        armMotor.setPower(0);
+    }
+
     public void stop() {
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotor.setPower(0);
         servo.setPosition(0);
     }
