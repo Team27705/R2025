@@ -17,8 +17,6 @@ import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.subsystems.Vision.TagPose;
 import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 
-
-
 /**
  * Gamepad 1(A) controls driving
  * Gamepad 2(B) controls intake
@@ -47,7 +45,6 @@ public class MecanumDrive extends LinearOpMode {
 
         // Combine telemetry with dashboard
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-
         robot.init();
 
         // Enable camera stream in Driver Station app
@@ -60,8 +57,7 @@ public class MecanumDrive extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-
-
+        
         while (opModeIsActive()) {
             handleDriveControls();
             handleSpeedControls();
@@ -69,7 +65,6 @@ public class MecanumDrive extends LinearOpMode {
             handleIntakeControls();
             updateTelemetry();
         }
-
         robot.drivetrain.stop();
     }
 
@@ -111,7 +106,6 @@ public class MecanumDrive extends LinearOpMode {
         } else {
             servoMoving = false;
         }
-
     }
 
     private void handleSpeedControls() {
@@ -146,20 +140,16 @@ public class MecanumDrive extends LinearOpMode {
             robot.drivetrain.resetEncoders();
             robot.intake.resetEncoders();
         }
-
         if (gamepad1.b) {
             robot.drivetrain.stop();
         }
     }
-
-
     // http://192.168.43.1:8080/dash
     private void updateTelemetry() {
         telemetry.addData("=== DRIVER CONTROLS ===", "");
         telemetry.addData("Drive Power", "%.2f", -gamepad1.left_stick_y * DriveConstants.SPEED_MULTIPLIER);
         telemetry.addData("Turn Power", "%.2f", gamepad1.left_stick_x * DriveConstants.SPEED_MULTIPLIER);
         telemetry.addData("Speed Multiplier", "%.2f", DriveConstants.SPEED_MULTIPLIER);
-
         // Add AprilTag pose information
         TagPose pose = robot.vision.getRelativePose();
         telemetry.addData("\n=== APRILTAG DATA ===", "");
@@ -174,15 +164,11 @@ public class MecanumDrive extends LinearOpMode {
         } else {
             telemetry.addData("Tag Status", "No tag detected");
         }
-
         telemetry.addData("\n=== ENCODER DATA ===", "");
-
-
         telemetry.addData("\n=== CONTROLS ===", "");
         telemetry.addData("Drive", "Left Stick = Move + Turn");
         telemetry.addData("Speed", "Bumpers = Adjust Speed");
         telemetry.addData("Utility", "Y = Reset Encoders");
-
         telemetry.update();
     }
 }
