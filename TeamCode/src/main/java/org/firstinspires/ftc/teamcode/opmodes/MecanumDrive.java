@@ -44,6 +44,11 @@ public class MecanumDrive extends LinearOpMode {
 
     private static final long armDebounceTime = 100;
 
+    private boolean xPressed = false;
+    private boolean yPressed = false;
+    private long lastServoChangeTime = 0;
+    private static final long servoDebounceTime = 250; // 250ms debounce time
+
 
     @Override
     public void runOpMode() {
@@ -80,8 +85,8 @@ public class MecanumDrive extends LinearOpMode {
     private void handleDriveControls() {
         // Get joystick values
         double drive = gamepad1.left_stick_y;   // Forward/back
-        double strafe = -gamepad1.left_stick_x;   // Left/right
-        double turn = -gamepad1.right_stick_x;    // Turning
+        double strafe = gamepad1.left_stick_x;   // Left/right
+        double turn = gamepad1.right_stick_x;    // Turning
 
         // Apply deadband
         if (Math.abs(drive) < ControllerConstants.STICK_DEADBAND) drive = 0;
@@ -98,25 +103,52 @@ public class MecanumDrive extends LinearOpMode {
 
     private void handleIntakeControls() {
         double turn = gamepad2.right_stick_y;
+
+        long currentTime = System.currentTimeMillis();
+
+        if (gamepad2.x && !xPressed && currentTime - lastServoChangeTime > servoDebounceTime) {
+            robot.intake.servoControl(servoIncrement);
+            lastServoChangeTime = currentTime;
+            xPressed = true;
+        } else if (!gamepad2.x) {
+            xPressed = false;
+        }
+
+        if (gamepad2.y && !yPressed && currentTime - lastServoChangeTime > servoDebounceTime) {
+            robot.intake.servoControl(-servoIncrement);
+            lastServoChangeTime = currentTime;
+            yPressed = true;
+        } else if (!gamepad2.y) {
+            yPressed = false;
+        }
+
         if (turn >= .5 ) {
             turn = .15;
+            robot.intake.armMotorControl(turn * Constants.IntakeConstants.SPEED_MULTIPLIER);
         }
         else if (turn <= -.5) {
             turn = -.15;
+            robot.intake.armMotorControl(turn * Constants.IntakeConstants.SPEED_MULTIPLIER);
         }
         else {
-            turn =0;
-            robot.intake.hold();
+            robot.intake.armMotorControl(0);
         }
         //handle debouncing
-
-        robot.intake.armMotorControl(turn * Constants.IntakeConstants.SPEED_MULTIPLIER);
 
         if (gamepad2.x){
             robot.intake.servoControl(servoIncrement);
         }
         if (gamepad2.y) {
             robot.intake.servoControl(-servoIncrement);
+        }
+        if (gamepad2.a){
+            robot.intake.resetMotor();
+        }
+        if (gamepad2.b){
+            robot.intake.hold();
+        }
+        if (gamepad2.left_bumper) {
+            robot.intake.dialServo();
         }
     }
 

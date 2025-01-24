@@ -35,7 +35,7 @@ public class Intake {
 
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         servo.setPosition(0);
     }
@@ -65,9 +65,19 @@ public class Intake {
     public int getArmPosition(){
         return armMotor.getCurrentPosition();
     }
+    public void resetMotor (){
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
+    
+    public void dialServo (){
+        servo.setPosition(90);
+    }
 
     public void hold (){
+        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotor.setPower(0);
+
     }
 
     public void stop() {
