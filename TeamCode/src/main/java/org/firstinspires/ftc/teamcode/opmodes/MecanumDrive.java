@@ -33,10 +33,9 @@ public class MecanumDrive extends LinearOpMode {
 
     private boolean armMoving = false;
     private long lastArmMoveTime = 0;
-    private boolean servoMoving = false;
-    private long lastServoMoveTime = 0;
+
     private static final long armDebounceTime = 100;
-    private static final long servoDebounceTime = 50;
+    
 
     @Override
     public void runOpMode() {
@@ -97,15 +96,6 @@ public class MecanumDrive extends LinearOpMode {
 
         robot.intake.armMotorControl(turn);
 
-        if (gamepad2.right_trigger > .1 || gamepad2.left_trigger > 0.1){
-            if (!servoMoving || (currentTime - lastServoMoveTime > servoDebounceTime)){
-                robot.intake.servoControl(gamepad2);
-                servoMoving = true;
-                lastServoMoveTime = currentTime;
-            }
-        } else {
-            servoMoving = false;
-        }
     }
 
     private void handleSpeedControls() {

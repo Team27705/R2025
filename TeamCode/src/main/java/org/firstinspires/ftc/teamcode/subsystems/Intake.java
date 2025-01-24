@@ -18,8 +18,10 @@ public class Intake {
     public final BeamBreak beamBreak;
 
     private static final double armPowerScale = 0.5;
-    private static final double servoScale = 0.01;
+    private static final double servoIncrement = 10.0;
     private double currentServoPosition = 0.5;
+    private static final double servoMin = 0.0;
+    private static final double servoMax = 1.0;
     private static final int armTicks = 10; //idk our encoder resolution
 
     public Intake (HardwareMap hardwareMap) {
@@ -37,24 +39,25 @@ public class Intake {
 
     }
 
-
-
     public void servoControl (Gamepad gamepad2){
-        if (gamepad2.right_bumper) {
-            currentServoPosition += servoScale;
+        if (gamepad2.y) {
+            // decrease incrementally by 10 degrees
+            currentServoPosition -= servoIncrement;
         }
-        if (gamepad2.left_bumper) {
-            currentServoPosition -= servoScale;
+        if (gamepad2.x) {
+            // increase incrementally by 10 degrees
+            currentServoPosition += servoIncrement;
         }
-        currentServoPosition = Math.min(Math.max(currentServoPosition, 0.0), 1.0);
+        if (gamepad2.a) {
+            // set position to 0 degrees
+            currentServoPosition = servoMin;
+        }
+
+        currentServoPosition = Math.min(Math.max(currentServoPosition, servoMin), servoMax);
+
         servo.setPosition(currentServoPosition);
     }
 
-    public void sampleGrabbed () {
-        if (beamBreak.beamState()) {
-
-        }
-    }
     public void armMotorControl (double power){
         double currentPower = power;
         if (power > 1){
@@ -64,10 +67,6 @@ public class Intake {
             currentPower /= Math.abs(currentPower);
         }
         armMotor.setPower(currentPower);
-    }
-
-    public void update(){
-
     }
 
     public boolean isArmBusy(){
