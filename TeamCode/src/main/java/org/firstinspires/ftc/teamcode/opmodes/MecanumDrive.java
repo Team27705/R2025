@@ -217,6 +217,8 @@ public class MecanumDrive extends LinearOpMode {
         telemetry.addData("Drive Power", "%.2f", -gamepad1.left_stick_y * DriveConstants.SPEED_MULTIPLIER);
         telemetry.addData("Turn Power", "%.2f", gamepad1.left_stick_x * DriveConstants.SPEED_MULTIPLIER);
         telemetry.addData("Drivetrain Speed Multiplier", "%.2f", DriveConstants.SPEED_MULTIPLIER);
+
+        telemetry.addData("== OPERATOR CONTORLS ==", "");
         telemetry.addData("Arm Speed Multiplier", "%.2f", Constants.IntakeConstants.SPEED_MULTIPLIER);
         // Add AprilTag pose information
         TagPose pose = robot.vision.getRelativePose();
@@ -237,6 +239,12 @@ public class MecanumDrive extends LinearOpMode {
         telemetry.addData("Drive", "Left Stick = Move + Turn");
         telemetry.addData("Speed", "Bumpers = Adjust Speed");
         telemetry.addData("Utility", "Y = Reset Encoders");
+
+        telemetry.addData("\nArm Rotate", "Right Joystick");
+        telemetry.addData("X and Y turn the servo Clockwise and counterclockwise", "");
+        telemetry.addData("B for ascension A to return to normal state", "");
+        telemetry.addData("left bumper to reset servo", "");
+
         telemetry.update();
     }
 }

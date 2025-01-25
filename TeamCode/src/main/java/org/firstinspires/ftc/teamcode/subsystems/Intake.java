@@ -70,7 +70,7 @@ public class Intake {
     }
     
     public void dialServo (){
-        servo.setPosition(90);
+        servo.setPosition(.5);
     }
 
     public void hold (){
