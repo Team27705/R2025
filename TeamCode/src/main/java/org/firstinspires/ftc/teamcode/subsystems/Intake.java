@@ -30,7 +30,7 @@ public class Intake {
 //        colorSensor = hardwareMap.get(ColorSensor.class, Constants.IntakeConstants.ARM_SENSOR);
 //        beamBreak = hardwareMap.get(BeamBreak.class, Constants.IntakeConstants.BEAM_BREAK);
 
-        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         servo.setDirection(Servo.Direction.FORWARD);
 
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -74,9 +74,7 @@ public class Intake {
     }
 
     public void hold (){
-        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setPower(0);
+        armMotor.setPower(-1);
 
     }
 

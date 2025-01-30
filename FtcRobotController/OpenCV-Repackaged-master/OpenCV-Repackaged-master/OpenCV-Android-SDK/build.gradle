@@ -1,0 +1,66 @@
+apply plugin: 'com.android.library'
+
+ext {
+    PUBLISH_GROUP_ID = 'org.openftc'
+    PUBLISH_ARTIFACT_ID = 'opencv-repackaged-bundled-dylibs'
+    PUBLISH_VERSION = '4.10.0-A'
+    PUBLISH_VERSION_CODE = 41000;
+
+    PUBLISH_DESC = 'OpenCV Repackaged'
+    PUBLISH_URL = 'https://github.com/OpenFTC/OpenCV-Repackaged'
+    PUBLISH_VCS_URL = 'https://github.com/OpenFTC/OpenCV-Repackaged/tree/master'
+    PUBLISH_VCS_CONNECTION = 'scm:git:github.com/OpenFTC/OpenCV-Repackaged.git'
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        versionName PUBLISH_VERSION
+        versionCode PUBLISH_VERSION_CODE
+        minSdkVersion 19
+        targetSdkVersion 21
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared"
+                targets "dummy_target_cpp_lib"
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+            }
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+            }
+        }
+    }
+
+
+    lintOptions {
+        abortOnError false
+    }
+
+    externalNativeBuild {
+        cmake {
+            path (project.projectDir.toString() + '/libcxx_helper/CMakeLists.txt')
+        }
+    }
+
+    ndkVersion '21.3.6528147'
+}
+
+dependencies {
+    compileOnly 'org.firstinspires.ftc:RobotCore:8.1.1'
+}
+
+apply from: '../sonatype-publish.gradle'

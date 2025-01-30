@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
+//import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -57,6 +59,10 @@ public class MecanumDrive extends LinearOpMode {
 
         // Combine telemetry with dashboard
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
+
+        waitForStart();
+
         robot.init();
 
         // Enable camera stream in Driver Station app
@@ -67,8 +73,6 @@ public class MecanumDrive extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Instructions", "Left Stick = Drive + Turn");
         telemetry.update();
-
-        waitForStart();
 
         while (opModeIsActive()) {
             handleDriveControls();
@@ -147,7 +151,7 @@ public class MecanumDrive extends LinearOpMode {
         if (gamepad2.b){
             robot.intake.hold();
         }
-        if (gamepad2.left_bumper) {
+        if (gamepad2.left_trigger >.5) {
             robot.intake.dialServo();
         }
     }
@@ -179,7 +183,7 @@ public class MecanumDrive extends LinearOpMode {
         }
 
         if (gamepad2.left_bumper && !lbPressedB && currentTimeB - lastSpeedChangeTimeB > debounceTime) {
-            if (Constants.IntakeConstants.SPEED_MULTIPLIER > 1) {
+            if (Constants.IntakeConstants.SPEED_MULTIPLIER > 2.5) {
                 Constants.IntakeConstants.SPEED_MULTIPLIER -= .25;
                 lastSpeedChangeTimeA = currentTimeB;
             }
@@ -189,8 +193,8 @@ public class MecanumDrive extends LinearOpMode {
             lbPressedB = false;
         }
         if (gamepad2.right_bumper && !rbPressedB && currentTimeB - lastSpeedChangeTimeB > debounceTime) {
-            if (DriveConstants.SPEED_MULTIPLIER < 1.0){
-                DriveConstants.SPEED_MULTIPLIER += 0.25;
+            if (Constants.IntakeConstants.SPEED_MULTIPLIER < .75){
+                Constants.IntakeConstants.SPEED_MULTIPLIER += 0.25;
                 lastSpeedChangeTimeA = currentTimeA;
             }
             rbPressedB = true;
@@ -222,6 +226,7 @@ public class MecanumDrive extends LinearOpMode {
         telemetry.addData("Arm Speed Multiplier", "%.2f", Constants.IntakeConstants.SPEED_MULTIPLIER);
         // Add AprilTag pose information
         TagPose pose = robot.vision.getRelativePose();
+
         telemetry.addData("\n=== APRILTAG DATA ===", "");
         if (pose != null) {
             telemetry.addData("Tag X", "%.2f in", pose.x);
